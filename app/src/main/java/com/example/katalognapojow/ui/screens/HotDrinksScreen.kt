@@ -20,7 +20,7 @@ fun HotDrinksScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Napoje Gorące",
+            text = "Napoje gorące",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 24.dp)
@@ -31,8 +31,8 @@ fun HotDrinksScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
-            item { DrinkCard("Herbata Miętowa", R.drawable.herbata_mietowa) }
-            item { DrinkCard("Gorąca Czekolada", R.drawable.czekolada) }
+            item { DrinkCard("Herbata miętowa", R.drawable.herbata_mietowa) }
+            item { DrinkCard("Gorąca czekolada", R.drawable.czekolada) }
         }
     }
 }

@@ -20,7 +20,7 @@ fun StillDrinksScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Napoje Niegazowane", // Zmieniony tytuł
+            text = "Napoje niegazowane", // Zmieniony tytuł
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 24.dp)
