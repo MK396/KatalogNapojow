@@ -4,56 +4,54 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.*
-import androidx.navigation.compose.rememberNavController
 import com.example.katalognapojow.ui.screens.*
 import com.example.katalognapojow.ui.theme.KatalogNapojowTheme
-import androidx.compose.runtime.getValue
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.example.katalognapojow.ui.theme.Orange
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
-            //dodane
             var isDarkTheme by remember { mutableStateOf(false) }
 
-            KatalogNapojowTheme(
-                //dodane
-                darkTheme = isDarkTheme,
-            ) {
-                val navController = rememberNavController() // Kontroler nawigacji
+            KatalogNapojowTheme(darkTheme = isDarkTheme) {
+                val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
 
                 Scaffold(
-                    bottomBar = { MyBottomBar(navController) },
-                    // Opcjonalnie: Dodajemy FloatingActionButton do szybkiej zmiany motywu
-                    // (lub zrób to na ekranie HomeScreen/AboutScreen)
-                    floatingActionButton = {
-                        Column {
-                            // Przycisk zmiany motywu (Pkt A)
-                            FloatingActionButton(onClick = { isDarkTheme = !isDarkTheme }) {
-                                Text(if (isDarkTheme) "☀️" else "🌙")
+                    topBar = {
+                        TopAppBar(
+                            title = {},
+                            navigationIcon = {
+                                if (currentRoute != Screen.Home.route) {
+                                    IconButton(onClick = { navController.popBackStack() }) {
+                                        Icon(Icons.Default.ArrowBack, contentDescription = "Wstecz")
+                                    }
+                                }
+                            },
+                            actions = {
+                                IconButton(onClick = { isDarkTheme = !isDarkTheme }) {
+                                    Icon(
+                                        imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                        contentDescription = "Zmień motyw"
+                                    )
+                                }
                             }
-                        }
-                    }
+                        )
+                    },
+                    bottomBar = { MyBottomBar(navController) }
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
@@ -62,7 +60,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(Screen.Home.route) { HomeScreen(navController) }
                         composable(Screen.Catalog.route) { CatalogScreen(navController) }
-                        // composable(Screen.About.route) { AboutScreen(navController) }
                         composable(Screen.SparklingDrinks.route) { SparklingDrinksScreen(navController) }
                         composable(Screen.StillDrinks.route) { StillDrinksScreen(navController) }
                         composable(Screen.HotDrinks.route) { HotDrinksScreen(navController) }
@@ -77,82 +74,30 @@ class MainActivity : ComponentActivity() {
 fun MyBottomBar(navController: androidx.navigation.NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
     val activeColor = Orange
     val inactiveColor = Color.Black
 
-    NavigationBar(
-        containerColor = Color.White,
-        tonalElevation = 8.dp
-    ) {
-        // Katalog
+    NavigationBar(containerColor = Color.White, tonalElevation = 8.dp) {
         NavigationBarItem(
             selected = currentRoute == Screen.Catalog.route,
-            onClick = {
-                navController.navigate(Screen.Catalog.route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
-            },
-            icon = {
-                Icon(
-                    Icons.Default.MenuBook,
-                    contentDescription = "Katalog",
-                    // Dynamiczna zmiana koloru ikony
-                    tint = if (currentRoute == Screen.Catalog.route) activeColor else inactiveColor
-                )
-            },
+            onClick = { navController.navigate(Screen.Catalog.route) { launchSingleTop = true } },
+            icon = { Icon(Icons.Default.MenuBook, contentDescription = null, tint = if (currentRoute == Screen.Catalog.route) activeColor else inactiveColor) },
             label = { Text("Katalog") },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent, // Usuwa owalną plamę pod aktywną ikoną
-                selectedTextColor = activeColor,
-                unselectedTextColor = inactiveColor
-            )
+            colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent, selectedTextColor = activeColor)
         )
-
-        // Start
         NavigationBarItem(
             selected = currentRoute == Screen.Home.route,
-            onClick = {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
-            },
-            icon = {
-                Icon(
-                    Icons.Default.Home,
-                    contentDescription = "Start",
-                    tint = if (currentRoute == Screen.Home.route) activeColor else inactiveColor
-                )
-            },
+            onClick = { navController.navigate(Screen.Home.route) { launchSingleTop = true } },
+            icon = { Icon(Icons.Default.Home, contentDescription = null, tint = if (currentRoute == Screen.Home.route) activeColor else inactiveColor) },
             label = { Text("Start") },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent,
-                selectedTextColor = activeColor,
-                unselectedTextColor = inactiveColor
-            )
+            colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent, selectedTextColor = activeColor)
         )
-
-        // 3. O NAS
         NavigationBarItem(
             selected = currentRoute == Screen.About.route,
-            onClick = {
-                // navController.navigate(Screen.About.route)
-            },
-            icon = {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = "O nas",
-                    tint = if (currentRoute == Screen.About.route) activeColor else inactiveColor
-                )
-            },
+            onClick = { /* O nas navigation */ },
+            icon = { Icon(Icons.Default.Person, contentDescription = null, tint = if (currentRoute == Screen.About.route) activeColor else inactiveColor) },
             label = { Text("O nas") },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent,
-                selectedTextColor = activeColor,
-                unselectedTextColor = inactiveColor
-            )
+            colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent, selectedTextColor = activeColor)
         )
     }
 }
