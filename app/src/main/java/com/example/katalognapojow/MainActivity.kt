@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,6 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.katalognapojow.ui.theme.Orange
 
 class MainActivity : ComponentActivity() {
@@ -27,11 +32,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            KatalogNapojowTheme {
+
+            //dodane
+            var isDarkTheme by remember { mutableStateOf(false) }
+
+            KatalogNapojowTheme(
+                //dodane
+                darkTheme = isDarkTheme,
+            ) {
                 val navController = rememberNavController() // Kontroler nawigacji
 
                 Scaffold(
-                    bottomBar = { MyBottomBar(navController) }
+                    bottomBar = { MyBottomBar(navController) },
+                    // Opcjonalnie: Dodajemy FloatingActionButton do szybkiej zmiany motywu
+                    // (lub zrób to na ekranie HomeScreen/AboutScreen)
+                    floatingActionButton = {
+                        Column {
+                            // Przycisk zmiany motywu (Pkt A)
+                            FloatingActionButton(onClick = { isDarkTheme = !isDarkTheme }) {
+                                Text(if (isDarkTheme) "☀️" else "🌙")
+                            }
+                        }
+                    }
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,

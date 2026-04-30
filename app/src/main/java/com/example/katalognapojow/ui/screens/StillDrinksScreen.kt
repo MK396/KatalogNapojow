@@ -20,7 +20,7 @@ fun StillDrinksScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Napoje niegazowane", // Zmieniony tytuł
+            text = "Napoje niegazowane",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 24.dp)
@@ -31,7 +31,6 @@ fun StillDrinksScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
-            // Tutaj dodaj swoje soki lub wodę
             item { DrinkCard("Sok jabłkowy", R.drawable.sok) }
             item { DrinkCard("Oshee jagodowe", R.drawable.oshee) }
             item { DrinkCard("Skyr wiśniowy", R.drawable.skyr) }

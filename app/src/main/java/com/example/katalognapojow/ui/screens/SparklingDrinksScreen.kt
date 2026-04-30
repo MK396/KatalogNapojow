@@ -16,7 +16,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.katalognapojow.R // Ważne: Twój własny pakiet R dla zasobów drawable
+import com.example.katalognapojow.R
+
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 
 @Composable
 fun SparklingDrinksScreen(navController: NavController) {
@@ -36,9 +46,8 @@ fun SparklingDrinksScreen(navController: NavController) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 32.dp) // Odstęp na dole dla estetyki
+            contentPadding = PaddingValues(bottom = 32.dp)
         ) {
-            // Upewnij się, że masz te pliki w res/drawable (dzik_lemon.png itp.)
             item { DrinkCard("Coca Cola", R.drawable.cola) }
             item { DrinkCard("Fanta pomarańczowa", R.drawable.fanta) }
         }
@@ -47,7 +56,45 @@ fun SparklingDrinksScreen(navController: NavController) {
 
 @Composable
 fun DrinkCard(name: String, imageRes: Int) {
+    var showFullScreen by remember { mutableStateOf(false) }
     val cardShape = RoundedCornerShape(40.dp)
+
+    if (showFullScreen) {
+        Dialog(
+            onDismissRequest = { showFullScreen = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false // Pozwala obrazkowi zająć cały ekran
+            )
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color.Black.copy(alpha = 0.5f)
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painter = painterResource(id = imageRes),
+                        contentDescription = "Powiększone zdjęcie $name",
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxWidth()
+                    )
+                    IconButton(
+                        onClick = { showFullScreen = false },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Zamknij",
+                            tint = Color.White,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,6 +121,7 @@ fun DrinkCard(name: String, imageRes: Int) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(cardShape)
+                    .clickable { showFullScreen = true }
             )
         }
     }

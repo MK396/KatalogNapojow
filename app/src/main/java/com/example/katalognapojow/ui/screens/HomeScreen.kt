@@ -1,12 +1,15 @@
 package com.example.katalognapojow.ui.screens
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +20,28 @@ import androidx.navigation.NavController
 
 @Composable
 fun HomeScreen(navController: NavController) {
+    // Definiujemy przejście nieskończone (infinite transition)
+    val infiniteTransition = rememberInfiniteTransition(label = "HomeButtonAnim")
+
+    // Zmiana rozmiaru przycisku
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+    )
+
+    // Zmiana koloru przycisku
+    val animatedColor by infiniteTransition.animateColor(
+        initialValue = Color(0xFFF57C00),
+        targetValue = Color(0xFFF5B576),
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,8 +77,11 @@ fun HomeScreen(navController: NavController) {
         // Przycisk
         Button(
             onClick = { navController.navigate(Screen.Catalog.route) },
-            modifier = Modifier.fillMaxWidth(0.4f).height(60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF57C00))
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .height(60.dp)
+                .graphicsLayer(scaleX = scale, scaleY = scale),
+            colors = ButtonDefaults.buttonColors(containerColor = animatedColor)
         ) {
             Text("Katalog")
         }
