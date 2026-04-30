@@ -18,8 +18,25 @@ import com.example.katalognapojow.R
 import com.example.katalognapojow.Screen
 import androidx.navigation.NavController
 
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 @Composable
 fun HomeScreen(navController: NavController) {
+    val productImages = listOf(
+        R.drawable.cola,
+        R.drawable.sok,
+        R.drawable.czekolada
+    )
+
+    // Stan karuzeli
+    val pagerState = rememberPagerState(pageCount = { productImages.size })
+
     // Definiujemy przejście nieskończone (infinite transition)
     val infiniteTransition = rememberInfiniteTransition(label = "HomeButtonAnim")
 
@@ -85,5 +102,36 @@ fun HomeScreen(navController: NavController) {
         ) {
             Text("Katalog")
         }
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        // Karuzela
+        Text(
+            text = "Przykładowe produkty",
+            modifier = Modifier.align(Alignment.Start).padding(bottom = 16.dp)
+        )
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            contentPadding = PaddingValues(horizontal = 32.dp),
+            pageSpacing = 16.dp
+        ) { page ->
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = productImages[page]),
+                    contentDescription = "Zdjęcie produktu w karuzeli",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
