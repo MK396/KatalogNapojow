@@ -62,7 +62,8 @@ fun HomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Logo
@@ -84,7 +85,7 @@ fun HomeScreen(navController: NavController) {
 
         // Opis
         Text(
-            text = "W naszym katalogu znajdziesz 12 wyjątkowych propozycji podzielonych na sekcje: gazowane, niegazowane oraz napoje gorące.",
+            text = "W katalogu znajdziesz 12 produktów podzielonych 3 kategorie: gazowane, niegazowane oraz napoje gorące.",
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 16.dp)
         )

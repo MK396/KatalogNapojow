@@ -62,13 +62,11 @@ fun DrinkCard(name: String, imageRes: Int) {
     if (showFullScreen) {
         Dialog(
             onDismissRequest = { showFullScreen = false },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false // Pozwala obrazkowi zająć cały ekran
-            )
+            properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = Color.Black.copy(alpha = 0.5f)
+                color = Color.Black.copy(alpha = 0.7f)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Image(
@@ -98,10 +96,10 @@ fun DrinkCard(name: String, imageRes: Int) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color.Black, cardShape),
+            .border(1.dp, MaterialTheme.colorScheme.outline, cardShape),
         shape = cardShape,
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier
@@ -112,7 +110,8 @@ fun DrinkCard(name: String, imageRes: Int) {
             Text(
                 text = name,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
             Image(

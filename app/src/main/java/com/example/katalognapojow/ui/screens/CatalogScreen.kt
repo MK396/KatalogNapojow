@@ -49,9 +49,12 @@ fun CategoryButton(text: String, onClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Orange),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Orange,
+            contentColor = Color.Black
+        ),
         shape = RoundedCornerShape(40.dp)
     ) {
-        Text(text = text, color = Color.Black, fontSize = 20.sp)
+        Text(text = text, fontSize = 20.sp)
     }
 }

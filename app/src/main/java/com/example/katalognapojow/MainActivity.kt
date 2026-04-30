@@ -75,9 +75,9 @@ fun MyBottomBar(navController: androidx.navigation.NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val activeColor = Orange
-    val inactiveColor = Color.Black
+    val inactiveColor = MaterialTheme.colorScheme.onSurface
 
-    NavigationBar(containerColor = Color.White, tonalElevation = 8.dp) {
+    NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 2.dp) {
         NavigationBarItem(
             selected = currentRoute == Screen.Catalog.route,
             onClick = { navController.navigate(Screen.Catalog.route) { launchSingleTop = true } },
