@@ -1,13 +1,17 @@
 package com.example.katalognapojow
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.compose.*
 import com.example.katalognapojow.ui.screens.*
 import com.example.katalognapojow.ui.theme.KatalogNapojowTheme
@@ -23,16 +27,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var isDarkTheme by remember { mutableStateOf(false) }
+            var isDarkTheme by rememberSaveable { mutableStateOf(false) }
 
             KatalogNapojowTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
+                val configuration = LocalConfiguration.current
+                val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
                 Scaffold(
                     topBar = {
                         TopAppBar(
+                            modifier = if (isLandscape) Modifier.height(48.dp) else Modifier,
                             title = {},
                             navigationIcon = {
                                 if (currentRoute != Screen.Home.route) {
