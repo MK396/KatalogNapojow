@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var isDarkTheme by rememberSaveable { mutableStateOf(false) }
 
-            KatalogNapojowTheme(darkTheme = isDarkTheme) {
+            KatalogNapojowTheme(darkTheme = isDarkTheme, dynamicColor = false) {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
