@@ -29,7 +29,9 @@ import com.example.katalognapojow.R
 fun SparklingDrinksScreen(navController: NavController) {
     val products = listOf(
         "Coca Cola" to R.drawable.cola,
-        "Fanta pomarańczowa" to R.drawable.fanta
+        "Fanta pomarańczowa" to R.drawable.fanta,
+        "Dzik cytrynowy" to R.drawable.dzik,
+        "Sprite" to R.drawable.sprite
     )
     
     BaseProductScreen(

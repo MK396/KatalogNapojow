@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
+
+
 @Composable
 fun BaseProductScreen(
     title: String,
@@ -28,7 +30,8 @@ fun BaseProductScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = if (isLandscape) 16.dp else 50.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = title,
@@ -39,11 +42,10 @@ fun BaseProductScreen(
 
         if (isLandscape) {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.fillMaxSize(0.8f),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
             ) {
                 products.forEach { (name, imageRes) ->
                     item { DrinkCard(name, imageRes) }

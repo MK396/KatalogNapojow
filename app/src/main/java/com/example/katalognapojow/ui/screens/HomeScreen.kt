@@ -121,8 +121,8 @@ fun HomeScreen(navController: NavController) {
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
+                            .fillMaxWidth(0.7f)
+                            .height(200.dp)
                             .clip(RoundedCornerShape(16.dp)),
                         contentPadding = PaddingValues(horizontal = 24.dp),
                         pageSpacing = 12.dp
