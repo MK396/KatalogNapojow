@@ -2,6 +2,7 @@ package com.example.katalognapojow.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,9 +30,9 @@ fun BaseProductScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = if (isLandscape) 16.dp else 50.dp),
+            .padding(horizontal = if (isLandscape) 0.dp else 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = title,
@@ -43,7 +44,9 @@ fun BaseProductScreen(
         if (isLandscape) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
-                modifier = Modifier.fillMaxSize(0.8f),
+                modifier = Modifier
+                    .fillMaxHeight(1f)
+                    .fillMaxWidth(0.95f),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {

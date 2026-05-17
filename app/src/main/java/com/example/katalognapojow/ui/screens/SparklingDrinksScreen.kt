@@ -107,7 +107,7 @@ fun DrinkCard(name: String, imageRes: Int) {
                 painter = painterResource(id = imageRes),
                 contentDescription = name,
                 modifier = Modifier
-                    .then(if (isLandscape) Modifier.height(120.dp) else Modifier.fillMaxWidth())
+                    .then(if (isLandscape) Modifier.height(160.dp) else Modifier.fillMaxWidth())
                     .fillMaxWidth()
                     .clip(cardShape)
                     .clickable { showFullScreen = true },

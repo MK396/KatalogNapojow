@@ -1,6 +1,5 @@
 package com.example.katalognapojow
 
-import CatalogScreen
 import android.content.Context
 import android.content.res.Configuration
 import android.media.AudioManager
@@ -59,10 +58,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Scaffold(
+                        contentWindowInsets = WindowInsets.navigationBars,
                         topBar = {
                             TopAppBar(
+                                windowInsets = if (isLandscape) WindowInsets(top = 24.dp, left = 10.dp, right = 10.dp) else TopAppBarDefaults.windowInsets,
                                 // W landscape zmniejszamy wysokość paska górnego, by oszczędzić miejsce
-                                modifier = if (isLandscape) Modifier.height(48.dp) else Modifier,
                                 title = {
                                     if (!isLandscape) Text("Katalog Napojów")
                                 },

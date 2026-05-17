@@ -6,6 +6,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -38,14 +39,10 @@ fun HomeScreen(navController: NavController) {
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    // Stan karuzeli
     val pagerState = rememberPagerState(pageCount = { products.size })
 
-    // Definiujemy przejście nieskończone (infinite transition)
     val infiniteTransition = rememberInfiniteTransition(label = "HomeButtonAnim")
 
-    // Zmiana rozmiaru przycisku
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.1f,
@@ -55,7 +52,6 @@ fun HomeScreen(navController: NavController) {
         ),
     )
 
-    // Zmiana koloru przycisku
     val animatedColor by infiniteTransition.animateColor(
         initialValue = Color(0xFFF57C00),
         targetValue = Color(0xFFF5B576),
@@ -65,17 +61,14 @@ fun HomeScreen(navController: NavController) {
         ),
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
+    // Główny kontener na cały ekran
+    Box(modifier = Modifier.fillMaxSize()) {
         if (isLandscape) {
+            // TRYB POZIOMY: Bez scrolla, wycentrowany w pionie dzięki Alignment.CenterVertically
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize(), // Wypełnia cały ekran, eliminując pustkę na dole
+                verticalAlignment = Alignment.Top,
             ) {
                 // Lewa strona: Logo i teksty
                 Column(
@@ -121,10 +114,10 @@ fun HomeScreen(navController: NavController) {
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .height(200.dp)
+                            .fillMaxWidth(0.95f)
+                            .fillMaxHeight(0.9f)
                             .clip(RoundedCornerShape(16.dp)),
-                        contentPadding = PaddingValues(horizontal = 24.dp),
+                        contentPadding = PaddingValues(horizontal = 48.dp),
                         pageSpacing = 12.dp
                     ) { page ->
                         ProductCarouselCard(products[page], navController)
@@ -132,9 +125,11 @@ fun HomeScreen(navController: NavController) {
                 }
             }
         } else {
+            // TRYB PIONOWY: Posiada verticalScroll, ponieważ elementy nie mieszczą się na jednym ekranie
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState()) // Scroll aktywny TYLKO w pionie
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
