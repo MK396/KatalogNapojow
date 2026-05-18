@@ -16,24 +16,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.katalognapojow.Screen
+import com.example.katalognapojow.ui.theme.LocalDimens
 import com.example.katalognapojow.ui.theme.Orange
 
 @Composable
 fun CatalogScreen(navController: NavController) {
+    val dimens = LocalDimens.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     if (isLandscape) {
-        // --- TRYB LANDSCAPE ---
-        // W poziomie zawartość może wymagać przewijania na niskich ekranach,
-        // dlatego tutaj zostawiamy verticalScroll, a elementy układamy w Row.
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 8.dp, start = 24.dp, end = 24.dp)
+                .padding(top = 8.dp, start = dimens.screenPadding, end = dimens.screenPadding)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
@@ -45,31 +43,28 @@ fun CatalogScreen(navController: NavController) {
             ) {
                 CategoryButton(
                     text = "Napoje gazowane",
-                    modifier = Modifier.weight(1f).height(140.dp),
+                    modifier = Modifier.weight(1f).height(dimens.categoryButtonHeight),
                     onClick = { navController.navigate(Screen.SparklingDrinks.route) }
                 )
                 CategoryButton(
                     text = "Napoje niegazowane",
-                    modifier = Modifier.weight(1f).height(140.dp),
+                    modifier = Modifier.weight(1f).height(dimens.categoryButtonHeight),
                     onClick = { navController.navigate(Screen.StillDrinks.route) }
                 )
                 CategoryButton(
                     text = "Napoje gorące",
-                    modifier = Modifier.weight(1f).height(140.dp),
+                    modifier = Modifier.weight(1f).height(dimens.categoryButtonHeight),
                     onClick = { navController.navigate(Screen.HotDrinks.route) }
                 )
             }
         }
     } else {
-        // --- TRYB PORTRAIT ---
-        // Usunęliśmy stąd verticalScroll. Kolumna zajmuje dokładnie 100% wysokości ekranu,
-        // a Arrangement.Center idealnie i równomiernie wyśrodkuje cały blok przycisków.
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(dimens.screenPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top // To teraz zadziała perfekcyjnie
+            verticalArrangement = Arrangement.Top
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -78,17 +73,17 @@ fun CatalogScreen(navController: NavController) {
             ) {
                 CategoryButton(
                     text = "Napoje gazowane",
-                    modifier = Modifier.height(100.dp),
+                    modifier = Modifier.height(dimens.categoryButtonHeight),
                     onClick = { navController.navigate(Screen.SparklingDrinks.route) }
                 )
                 CategoryButton(
                     text = "Napoje niegazowane",
-                    modifier = Modifier.height(100.dp),
+                    modifier = Modifier.height(dimens.categoryButtonHeight),
                     onClick = { navController.navigate(Screen.StillDrinks.route) }
                 )
                 CategoryButton(
                     text = "Napoje gorące",
-                    modifier = Modifier.height(100.dp),
+                    modifier = Modifier.height(dimens.categoryButtonHeight),
                     onClick = { navController.navigate(Screen.HotDrinks.route) }
                 )
             }
@@ -102,6 +97,8 @@ fun CategoryButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+    val dimens = LocalDimens.current
+
     Button(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
@@ -111,6 +108,6 @@ fun CategoryButton(
         ),
         shape = RoundedCornerShape(40.dp)
     ) {
-        Text(text = text, fontSize = 18.sp, textAlign = TextAlign.Center)
+        Text(text = text, fontSize = dimens.buttonFontSize, textAlign = TextAlign.Center)
     }
 }

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -22,84 +24,85 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.example.katalognapojow.ui.screens.*
 import com.example.katalognapojow.ui.theme.KatalogNapojowTheme
+import com.example.katalognapojow.ui.theme.LocalDimens
 import com.example.katalognapojow.ui.theme.Orange
+import com.example.katalognapojow.ui.theme.adaptiveDimens
 
 class MainActivity : ComponentActivity() {
 
     private val TAG = "Z8_LOGS"
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Logowanie parametrów urządzenia
         logDeviceConfiguration(resources.configuration)
         checkMediaStatus()
         logAudioParameters()
 
         enableEdgeToEdge()
         setContent {
+            val windowSizeClass = calculateWindowSizeClass(this)
+            val dimens = adaptiveDimens(windowSizeClass)
             var isDarkTheme by rememberSaveable { mutableStateOf(false) }
 
-            KatalogNapojowTheme(darkTheme = isDarkTheme, dynamicColor = false) {
-                val navController = rememberNavController()
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
+            CompositionLocalProvider(LocalDimens provides dimens) {
+                KatalogNapojowTheme(darkTheme = isDarkTheme, dynamicColor = false) {
+                    val navController = rememberNavController()
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
 
-                val configuration = LocalConfiguration.current
-                val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    val configuration = LocalConfiguration.current
+                    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-                // Używamy Row jako głównego kontenera, aby NavigationRail stał obok Scaffolda
-                Row(modifier = Modifier.fillMaxSize()) {
+                    Row(modifier = Modifier.fillMaxSize()) {
 
-                    // Wyświetlaj pasek boczny tylko w trybie poziomym
-                    if (isLandscape) {
-                        MyNavigationRail(navController, currentRoute)
-                    }
+                        if (isLandscape) {
+                            MyNavigationRail(navController, currentRoute)
+                        }
 
-                    Scaffold(
-                        contentWindowInsets = WindowInsets.navigationBars,
-                        topBar = {
-                            TopAppBar(
-                                windowInsets = if (isLandscape) WindowInsets(top = 24.dp, left = 10.dp, right = 10.dp) else TopAppBarDefaults.windowInsets,
-                                // W landscape zmniejszamy wysokość paska górnego, by oszczędzić miejsce
-                                title = {
-                                    if (!isLandscape) Text("Katalog Napojów")
-                                },
-                                navigationIcon = {
-                                    if (currentRoute != Screen.Home.route) {
-                                        IconButton(onClick = { navController.popBackStack() }) {
-                                            Icon(Icons.Default.ArrowBack, contentDescription = "Wstecz")
+                        Scaffold(
+                            contentWindowInsets = WindowInsets.navigationBars,
+                            topBar = {
+                                TopAppBar(
+                                    windowInsets = if (isLandscape) WindowInsets(top = 24.dp, left = 10.dp, right = 10.dp) else TopAppBarDefaults.windowInsets,
+                                    title = {
+                                        if (!isLandscape) Text("Katalog Napojów")
+                                    },
+                                    navigationIcon = {
+                                        if (currentRoute != Screen.Home.route) {
+                                            IconButton(onClick = { navController.popBackStack() }) {
+                                                Icon(Icons.Default.ArrowBack, contentDescription = "Wstecz")
+                                            }
+                                        }
+                                    },
+                                    actions = {
+                                        IconButton(onClick = { isDarkTheme = !isDarkTheme }) {
+                                            Icon(
+                                                imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                                contentDescription = "Zmień motyw"
+                                            )
                                         }
                                     }
-                                },
-                                actions = {
-                                    IconButton(onClick = { isDarkTheme = !isDarkTheme }) {
-                                        Icon(
-                                            imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                                            contentDescription = "Zmień motyw"
-                                        )
-                                    }
+                                )
+                            },
+                            bottomBar = {
+                                if (!isLandscape) {
+                                    MyBottomBar(navController, currentRoute)
                                 }
-                            )
-                        },
-                        // Wyświetlaj pasek dolny tylko w trybie pionowym
-                        bottomBar = {
-                            if (!isLandscape) {
-                                MyBottomBar(navController, currentRoute)
                             }
-                        }
-                    ) { innerPadding ->
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screen.Home.route,
-                            modifier = Modifier.padding(innerPadding)
-                        ) {
-                            composable(Screen.Home.route) { HomeScreen(navController) }
-                            composable(Screen.Catalog.route) { CatalogScreen(navController) }
-                            composable(Screen.SparklingDrinks.route) { SparklingDrinksScreen(navController) }
-                            composable(Screen.StillDrinks.route) { StillDrinksScreen(navController) }
-                            composable(Screen.HotDrinks.route) { HotDrinksScreen(navController) }
+                        ) { innerPadding ->
+                            NavHost(
+                                navController = navController,
+                                startDestination = Screen.Home.route,
+                                modifier = Modifier.padding(innerPadding)
+                            ) {
+                                composable(Screen.Home.route) { HomeScreen(navController) }
+                                composable(Screen.Catalog.route) { CatalogScreen(navController) }
+                                composable(Screen.SparklingDrinks.route) { SparklingDrinksScreen(navController) }
+                                composable(Screen.StillDrinks.route) { StillDrinksScreen(navController) }
+                                composable(Screen.HotDrinks.route) { HotDrinksScreen(navController) }
+                            }
                         }
                     }
                 }
@@ -107,7 +110,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // --- Funkcje logowania ---
     private fun logDeviceConfiguration(config: Configuration) {
         Log.i(TAG, "Rozdzielczość: ${config.screenWidthDp}x${config.screenHeightDp} dp")
         val orientationText = if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) "Pozioma" else "Pionowa"
@@ -127,8 +129,6 @@ class MainActivity : ComponentActivity() {
         Log.i(TAG, "Parametry audio - Sample Rate: $sampleRate Hz, Frames: $framesPerBuffer")
     }
 }
-
-// --- Komponenty nawigacji ---
 
 @Composable
 fun MyBottomBar(navController: NavController, currentRoute: String?) {

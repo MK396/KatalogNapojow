@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,8 +14,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
-
+import com.example.katalognapojow.ui.theme.LocalDimens
 
 @Composable
 fun BaseProductScreen(
@@ -24,21 +22,22 @@ fun BaseProductScreen(
     products: List<Pair<String, Int>>,
     navController: NavController
 ) {
+    val dimens = LocalDimens.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = if (isLandscape) 0.dp else 50.dp),
+            .padding(horizontal = if (isLandscape) 0.dp else dimens.screenPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = title,
-            style = if (isLandscape) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium,
+            fontSize = dimens.titleFontSize,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(vertical = if (isLandscape) 12.dp else 24.dp)
+            modifier = Modifier.padding(vertical = dimens.cardPadding)
         )
 
         if (isLandscape) {

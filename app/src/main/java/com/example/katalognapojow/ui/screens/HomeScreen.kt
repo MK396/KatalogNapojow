@@ -28,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.katalognapojow.R
 import com.example.katalognapojow.Screen
+import com.example.katalognapojow.ui.theme.LocalDimens
 
 @Composable
 fun HomeScreen(navController: NavController) {
+    val dimens = LocalDimens.current
     val products = listOf(
         Triple(R.drawable.cola, "Coca Cola", Screen.SparklingDrinks.route),
         Triple(R.drawable.sok, "Sok jabłkowy", Screen.StillDrinks.route),
@@ -45,7 +47,7 @@ fun HomeScreen(navController: NavController) {
 
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.1f,
+        targetValue = 1.05f, // Zmniejszyłem do 1.05f, żeby pulsujący przycisk nie nachodził na tekst w landscape
         animationSpec = infiniteRepeatable(
             animation = tween(1000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -61,30 +63,32 @@ fun HomeScreen(navController: NavController) {
         ),
     )
 
-    // Główny kontener na cały ekran
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLandscape) {
-            // TRYB POZIOMY: Bez scrolla, wycentrowany w pionie dzięki Alignment.CenterVertically
+            // --- TRYB POZIOMY ---
             Row(
-                modifier = Modifier
-                    .fillMaxSize(), // Wypełnia cały ekran, eliminując pustkę na dole
-                verticalAlignment = Alignment.Top,
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Lewa strona: Logo i teksty
                 Column(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .weight(1.3f)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = dimens.screenPadding),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.logo),
                         contentDescription = null,
-                        modifier = Modifier.size(120.dp)
+                        modifier = Modifier.size(dimens.logoSizeLandscape)
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Wybierz idealny napój",
-                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = dimens.titleFontSize,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
                     )
@@ -92,32 +96,33 @@ fun HomeScreen(navController: NavController) {
                     Button(
                         onClick = { navController.navigate(Screen.Catalog.route) },
                         modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .height(50.dp)
+                            .fillMaxWidth(0.7f) // Usunięto fillMaxHeight(0.6f) - wysokość kontroluje dimens.buttonHeight
+                            .height(dimens.buttonHeight)
                             .graphicsLayer(scaleX = scale, scaleY = scale),
                         colors = ButtonDefaults.buttonColors(containerColor = animatedColor)
                     ) {
-                        Text("Katalog")
+                        Text("Katalog", fontSize = dimens.buttonFontSize)
                     }
                 }
 
                 // Prawa strona: Karuzela
                 Column(
                     modifier = Modifier.weight(1.2f),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Przykładowe produkty",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        fontSize = dimens.cardFontSize, // Zmieniono na cardFontSize, by tekst był czytelniejszy na tablecie
+                        modifier = Modifier.padding(bottom = 12.dp)
                     )
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier
-                            .fillMaxWidth(0.95f)
-                            .fillMaxHeight(0.9f)
+                            .fillMaxWidth(0.65f) // Zmniejszona szerokość z fillMaxSize(), aby zbliżyć proporcje karty do pionowego prostokąta
+                            .height(dimens.carouselHeight) // Zmieniono z imageHeight na poprawne carouselHeight
                             .clip(RoundedCornerShape(16.dp)),
-                        contentPadding = PaddingValues(horizontal = 48.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
                         pageSpacing = 12.dp
                     ) { page ->
                         ProductCarouselCard(products[page], navController)
@@ -125,57 +130,56 @@ fun HomeScreen(navController: NavController) {
                 }
             }
         } else {
-            // TRYB PIONOWY: Posiada verticalScroll, ponieważ elementy nie mieszczą się na jednym ekranie
+            // --- TRYB PIONOWY ---
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()) // Scroll aktywny TYLKO w pionie
-                    .padding(horizontal = 16.dp),
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Logo
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = null,
-                    modifier = Modifier.size(200.dp)
+                    modifier = Modifier.size(dimens.logoSize)
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                // Nagłówek
                 Text(
                     text = "Wybierz idealny napój dla siebie",
-                    style = MaterialTheme.typography.headlineSmall,
+                    fontSize = dimens.titleFontSize,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
 
-                // Opis
                 Text(
                     text = "W katalogu znajdziesz 12 produktów podzielonych na 3 kategorie: gazowane, niegazowane oraz napoje gorące.",
+                    fontSize = dimens.bodyFontSize,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(vertical = 16.dp)
                 )
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // Przycisk
                 Button(
                     onClick = { navController.navigate(Screen.Catalog.route) },
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
-                        .height(60.dp)
+                        .height(dimens.buttonHeight)
                         .graphicsLayer(scaleX = scale, scaleY = scale),
                     colors = ButtonDefaults.buttonColors(containerColor = animatedColor)
                 ) {
-                    Text("Katalog")
+                    Text("Katalog", fontSize = dimens.buttonFontSize)
                 }
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Karuzela
                 Text(
                     text = "Przykładowe produkty",
+                    fontSize = dimens.cardFontSize,
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(bottom = 16.dp)
@@ -185,7 +189,7 @@ fun HomeScreen(navController: NavController) {
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp)
+                        .height(dimens.carouselHeight) // Konsekwentnie używamy carouselHeight dla głównej karuzeli
                         .clip(RoundedCornerShape(16.dp)),
                     contentPadding = PaddingValues(horizontal = 32.dp),
                     pageSpacing = 16.dp
@@ -203,6 +207,8 @@ fun ProductCarouselCard(
     product: Triple<Int, String, String>,
     navController: NavController
 ) {
+    val dimens = LocalDimens.current
+
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(16.dp),
@@ -217,7 +223,6 @@ fun ProductCarouselCard(
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-            // Opcjonalnie: Nakładka z nazwą produktu na karuzeli
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -227,9 +232,9 @@ fun ProductCarouselCard(
                 Text(
                     text = product.second,
                     color = Color.White,
+                    fontSize = dimens.bodyFontSize,
                     modifier = Modifier.padding(8.dp),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium
+                    textAlign = TextAlign.Center
                 )
             }
         }

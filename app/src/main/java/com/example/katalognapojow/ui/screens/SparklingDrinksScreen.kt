@@ -19,21 +19,21 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.katalognapojow.R
+import com.example.katalognapojow.ui.theme.LocalDimens
 
 @Composable
 fun SparklingDrinksScreen(navController: NavController) {
     val products = listOf(
         "Coca Cola" to R.drawable.cola,
-        "Fanta pomarańczowa" to R.drawable.fanta,
+        "Fanta" to R.drawable.fanta,
         "Dzik cytrynowy" to R.drawable.dzik,
         "Sprite" to R.drawable.sprite
     )
-    
+
     BaseProductScreen(
         title = "Napoje gazowane",
         products = products,
@@ -43,6 +43,7 @@ fun SparklingDrinksScreen(navController: NavController) {
 
 @Composable
 fun DrinkCard(name: String, imageRes: Int) {
+    val dimens = LocalDimens.current
     var showFullScreen by remember { mutableStateOf(false) }
     val cardShape = RoundedCornerShape(40.dp)
     val configuration = LocalConfiguration.current
@@ -67,8 +68,7 @@ fun DrinkCard(name: String, imageRes: Int) {
                     )
                     IconButton(
                         onClick = { showFullScreen = false },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
+                        modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -93,21 +93,21 @@ fun DrinkCard(name: String, imageRes: Int) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(if (isLandscape) 10.dp else 15.dp),
+                .padding(dimens.cardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = name,
-                fontSize = if (isLandscape) 18.sp else 24.sp,
+                fontSize = dimens.cardFontSize,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 12.dp))
+            Spacer(modifier = Modifier.height(dimens.cardPadding))
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = name,
                 modifier = Modifier
-                    .then(if (isLandscape) Modifier.height(160.dp) else Modifier.fillMaxWidth())
+                    .then(if (isLandscape) Modifier.height(dimens.imageHeight) else Modifier.fillMaxWidth())
                     .fillMaxWidth()
                     .clip(cardShape)
                     .clickable { showFullScreen = true },
