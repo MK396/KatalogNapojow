@@ -35,7 +35,6 @@ fun SparklingDrinksScreen(navController: NavController) {
     )
 
     BaseProductScreen(
-        title = "Napoje gazowane",
         products = products,
         navController = navController
     )
@@ -46,6 +45,7 @@ fun DrinkCard(name: String, imageRes: Int) {
     val dimens = LocalDimens.current
     var showFullScreen by remember { mutableStateOf(false) }
     val cardShape = RoundedCornerShape(40.dp)
+    val imageInsideShape = RoundedCornerShape(24.dp)
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -93,7 +93,8 @@ fun DrinkCard(name: String, imageRes: Int) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimens.cardPadding),
+                .padding(top = dimens.cardPadding, start = dimens.cardPadding, end = dimens.cardPadding),
+            // Usunąłem padding od dołu z głównego kontenera, żeby precyzyjnie kontrolować go Spacerem
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -102,17 +103,25 @@ fun DrinkCard(name: String, imageRes: Int) {
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
             Spacer(modifier = Modifier.height(dimens.cardPadding))
+
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = name,
                 modifier = Modifier
-                    .then(if (isLandscape) Modifier.height(dimens.imageHeight) else Modifier.fillMaxWidth())
-                    .fillMaxWidth()
-                    .clip(cardShape)
+                    .then(
+                        if (isLandscape) Modifier.height(dimens.imageHeight)
+                        // Teraz automatycznie pobierze 240.dp na telefonie (wyższa karta, szerszy produkt)
+                        else Modifier.fillMaxWidth().height(dimens.imageHeight)
+                    )
+                    .clip(imageInsideShape)
                     .clickable { showFullScreen = true },
-                contentScale = if (isLandscape) ContentScale.Crop else ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
+
+            // ZMIANA: Dodatkowy odstęp na dole, żeby karta dobrze wyglądała przy większej wysokości
+            Spacer(modifier = Modifier.height(dimens.cardPadding))
         }
     }
 }

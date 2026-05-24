@@ -40,8 +40,8 @@ fun adaptiveDimens(windowSizeClass: WindowSizeClass): AdaptiveDimens {
             logoSizeLandscape = if (isCompactHeight) 60.dp else 80.dp,
             buttonHeight = if (isCompactHeight) 44.dp else 56.dp,
             cardPadding = 12.dp,
-            screenPadding = 16.dp,
-            imageHeight = if (isCompactHeight) 120.dp else 160.dp,
+            screenPadding = 32.dp, // ZMIANA: Zwiększony margines ekranu, żeby zwęzić karty
+            imageHeight = if (isCompactHeight) 120.dp else 240.dp, // ZMIANA: Podwyższona puszka (karta będzie wyższa)
             carouselHeight = if (isCompactHeight) 160.dp else 220.dp,
             categoryButtonHeight = if (isCompactHeight) 70.dp else 90.dp,
         )

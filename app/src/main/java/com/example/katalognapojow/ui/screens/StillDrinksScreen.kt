@@ -14,7 +14,6 @@ fun StillDrinksScreen(navController: NavController) {
     )
 
     BaseProductScreen(
-        title = "Napoje niegazowane",
         products = products,
         navController = navController
     )

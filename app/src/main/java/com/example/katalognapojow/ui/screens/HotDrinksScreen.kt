@@ -14,7 +14,6 @@ fun HotDrinksScreen(navController: NavController) {
     )
 
     BaseProductScreen(
-        title = "Napoje gorące",
         products = products,
         navController = navController
     )
