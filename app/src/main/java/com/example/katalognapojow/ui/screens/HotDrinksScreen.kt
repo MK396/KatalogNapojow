@@ -8,7 +8,9 @@ import com.example.katalognapojow.R
 fun HotDrinksScreen(navController: NavController) {
     val products = listOf(
         "Herbata miętowa" to R.drawable.herbata_mietowa,
-        "Gorąca czekolada" to R.drawable.czekolada
+        "Gorąca czekolada" to R.drawable.czekolada,
+        "Kawa" to R.drawable.coffee,
+        "Matcha" to R.drawable.matcha
     )
 
     BaseProductScreen(

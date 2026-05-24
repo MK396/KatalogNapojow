@@ -9,7 +9,8 @@ fun StillDrinksScreen(navController: NavController) {
     val products = listOf(
         "Sok jabłkowy" to R.drawable.sok,
         "Oshee jagodowe" to R.drawable.oshee,
-        "Skyr wiśniowy" to R.drawable.skyr
+        "Skyr wiśniowy" to R.drawable.skyr,
+        "Smoothie" to R.drawable.smoothie
     )
 
     BaseProductScreen(
