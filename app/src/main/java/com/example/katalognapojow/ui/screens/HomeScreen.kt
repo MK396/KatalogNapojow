@@ -1,6 +1,8 @@
 package com.example.katalognapojow.ui.screens
 
 import android.content.res.Configuration
+import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -21,22 +23,86 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import com.example.katalognapojow.R
 import com.example.katalognapojow.Screen
 import com.example.katalognapojow.ui.theme.LocalDimens
 
+// 1. KROK: Klasa reprezentująca elementy karuzeli (zdjęcie lub wideo)
+sealed class CarouselItem(val title: String, val route: String) {
+    class ImageItem(val imageRes: Int, title: String, route: String) : CarouselItem(title, route)
+    class VideoItem(val videoRawRes: Int, title: String, route: String) : CarouselItem(title, route)
+}
+
+// 2. KROK: Komponent odtwarzacza reagujący na parametr isPlaying
+@OptIn(UnstableApi::class)
+@Composable
+fun VideoPlayer(
+    videoResId: Int,
+    isPlaying: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            setMediaItem(MediaItem.fromUri(videoUri))
+            repeatMode = Player.REPEAT_MODE_ALL
+            prepare()
+        }
+    }
+
+    // Dynamiczne sterowanie odtwarzaniem i głośnością
+    LaunchedEffect(isPlaying) {
+        if (isPlaying) {
+            exoPlayer.volume = 1f         // Włącz dźwięk, gdy karta jest aktywna
+            exoPlayer.playWhenReady = true // Uruchom wideo
+        } else {
+            exoPlayer.playWhenReady = false // Zatrzymaj wideo, gdy użytkownik przewinie dalej
+            exoPlayer.volume = 0f          // Wycisz na wszelki wypadek
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = { ctx ->
+            PlayerView(ctx).apply {
+                player = exoPlayer
+                useController = false
+                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            }
+        },
+        modifier = modifier
+    )
+}
+
 @Composable
 fun HomeScreen(navController: NavController) {
     val dimens = LocalDimens.current
+
+    // 3. KROK: Zmiana listy produktów na obiekty CarouselItem
     val products = listOf(
-        Triple(R.drawable.cola, "Coca Cola", Screen.SparklingDrinks.route),
-        Triple(R.drawable.sok, "Sok jabłkowy", Screen.StillDrinks.route),
-        Triple(R.drawable.czekolada, "Gorąca czekolada", Screen.HotDrinks.route)
+        CarouselItem.ImageItem(R.drawable.sok, "Sok", Screen.StillDrinks.route),
+        // Podmień R.raw.sok_video na dokładną nazwę swojego pliku w res/raw (bez rozszerzenia .mp4)
+        CarouselItem.VideoItem(R.raw.cola_video, "Coca-Cola", Screen.SparklingDrinks.route),
+        CarouselItem.ImageItem(R.drawable.czekolada, "Gorąca czekolada", Screen.HotDrinks.route)
     )
 
     val configuration = LocalConfiguration.current
@@ -47,7 +113,7 @@ fun HomeScreen(navController: NavController) {
 
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.05f, // Zmniejszyłem do 1.05f, żeby pulsujący przycisk nie nachodził na tekst w landscape
+        targetValue = 1.05f,
         animationSpec = infiniteRepeatable(
             animation = tween(1000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -70,7 +136,6 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Lewa strona: Logo i teksty
                 Column(
                     modifier = Modifier
                         .weight(1.3f)
@@ -96,7 +161,7 @@ fun HomeScreen(navController: NavController) {
                     Button(
                         onClick = { navController.navigate(Screen.Catalog.route) },
                         modifier = Modifier
-                            .fillMaxWidth(0.7f) // Usunięto fillMaxHeight(0.6f) - wysokość kontroluje dimens.buttonHeight
+                            .fillMaxWidth(0.7f)
                             .height(dimens.buttonHeight)
                             .graphicsLayer(scaleX = scale, scaleY = scale),
                         colors = ButtonDefaults.buttonColors(containerColor = animatedColor)
@@ -105,7 +170,6 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-                // Prawa strona: Karuzela
                 Column(
                     modifier = Modifier.weight(1.2f),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,19 +177,25 @@ fun HomeScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Przykładowe produkty",
-                        fontSize = dimens.cardFontSize, // Zmieniono na cardFontSize, by tekst był czytelniejszy na tablecie
+                        fontSize = dimens.cardFontSize,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier
-                            .fillMaxWidth(0.65f) // Zmniejszona szerokość z fillMaxSize(), aby zbliżyć proporcje karty do pionowego prostokąta
-                            .height(dimens.carouselHeight) // Zmieniono z imageHeight na poprawne carouselHeight
+                            .fillMaxWidth(0.65f)
+                            .height(dimens.carouselHeight)
                             .clip(RoundedCornerShape(16.dp)),
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         pageSpacing = 12.dp
                     ) { page ->
-                        ProductCarouselCard(products[page], navController)
+                        // 4. KROK: Sprawdzenie, czy strona jest aktualnie zaznaczona (Landscape)
+                        val isCurrentPage = pagerState.currentPage == page
+                        ProductCarouselCard(
+                            item = products[page],
+                            navController = navController,
+                            isCurrentPage = isCurrentPage
+                        )
                     }
                 }
             }
@@ -189,12 +259,18 @@ fun HomeScreen(navController: NavController) {
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(dimens.carouselHeight) // Konsekwentnie używamy carouselHeight dla głównej karuzeli
+                        .height(dimens.carouselHeight)
                         .clip(RoundedCornerShape(16.dp)),
                     contentPadding = PaddingValues(horizontal = 32.dp),
                     pageSpacing = 16.dp
                 ) { page ->
-                    ProductCarouselCard(products[page], navController)
+                    // 5. KROK: Sprawdzenie, czy strona jest aktualnie zaznaczona (Portrait)
+                    val isCurrentPage = pagerState.currentPage == page
+                    ProductCarouselCard(
+                        item = products[page],
+                        navController = navController,
+                        isCurrentPage = isCurrentPage
+                    )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
             }
@@ -204,8 +280,9 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun ProductCarouselCard(
-    product: Triple<Int, String, String>,
-    navController: NavController
+    item: CarouselItem, // 6. KROK: Zmiana typu z Triple na CarouselItem
+    navController: NavController,
+    isCurrentPage: Boolean // 7. KROK: Dodatkowy parametr sprawdzający widoczność
 ) {
     val dimens = LocalDimens.current
 
@@ -214,15 +291,28 @@ fun ProductCarouselCard(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxSize()
-            .clickable { navController.navigate(product.third) }
+            .clickable { navController.navigate(item.route) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = product.first),
-                contentDescription = "Zdjęcie produktu: ${product.second}",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+            // 8. KROK: Warunkowe renderowanie obrazka lub odtwarzacza wideo
+            when (item) {
+                is CarouselItem.ImageItem -> {
+                    Image(
+                        painter = painterResource(id = item.imageRes),
+                        contentDescription = "Zdjęcie produktu: ${item.title}",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                is CarouselItem.VideoItem -> {
+                    VideoPlayer(
+                        videoResId = item.videoRawRes,
+                        isPlaying = isCurrentPage,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -230,7 +320,7 @@ fun ProductCarouselCard(
                 color = Color.Black.copy(alpha = 0.5f)
             ) {
                 Text(
-                    text = product.second,
+                    text = item.title,
                     color = Color.White,
                     fontSize = dimens.bodyFontSize,
                     modifier = Modifier.padding(8.dp),

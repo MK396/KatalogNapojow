@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
                                             Screen.HotDrinks.route -> "Napoje gorące"
                                             Screen.Catalog.route -> "Katalog"
                                             Screen.Home.route -> "Katalog Napojów"
+                                            Screen.About.route -> "O nas"
                                             else -> "Katalog Napojów"
                                         }
                                         Text(titleText)
@@ -112,6 +113,7 @@ class MainActivity : ComponentActivity() {
                                 composable(Screen.SparklingDrinks.route) { SparklingDrinksScreen(navController) }
                                 composable(Screen.StillDrinks.route) { StillDrinksScreen(navController) }
                                 composable(Screen.HotDrinks.route) { HotDrinksScreen(navController) }
+                                composable(Screen.About.route) { AboutUsScreen() }
                             }
                         }
                     }
