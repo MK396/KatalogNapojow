@@ -1,63 +1,53 @@
 package com.example.katalognapojow.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.katalognapojow.R
-
-import androidx.compose.foundation.clickable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.navigation.NavController
+import com.example.katalognapojow.R
+import com.example.katalognapojow.ui.theme.LocalDimens
 
 @Composable
 fun SparklingDrinksScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 50.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Napoje gazowane",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(vertical = 24.dp)
-        )
+    val products = listOf(
+        "Coca Cola" to R.drawable.cola,
+        "Fanta" to R.drawable.fanta,
+        "Dzik cytrynowy" to R.drawable.dzik,
+        "Sprite" to R.drawable.sprite
+    )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 32.dp)
-        ) {
-            item { DrinkCard("Coca Cola", R.drawable.cola) }
-            item { DrinkCard("Fanta pomarańczowa", R.drawable.fanta) }
-        }
-    }
+    BaseProductScreen(
+        products = products,
+        navController = navController
+    )
 }
 
 @Composable
 fun DrinkCard(name: String, imageRes: Int) {
+    val dimens = LocalDimens.current
     var showFullScreen by remember { mutableStateOf(false) }
     val cardShape = RoundedCornerShape(40.dp)
+    val imageInsideShape = RoundedCornerShape(24.dp)
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     if (showFullScreen) {
         Dialog(
@@ -78,8 +68,7 @@ fun DrinkCard(name: String, imageRes: Int) {
                     )
                     IconButton(
                         onClick = { showFullScreen = false },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
+                        modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -104,24 +93,31 @@ fun DrinkCard(name: String, imageRes: Int) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(15.dp),
+                .padding(top = dimens.cardPadding, start = dimens.cardPadding, end = dimens.cardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = name,
-                fontSize = 24.sp,
+                fontSize = dimens.cardFontSize,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(12.dp))
+
+            Spacer(modifier = Modifier.height(dimens.cardPadding))
+
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = name,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(cardShape)
-                    .clickable { showFullScreen = true }
+                    .then(
+                        if (isLandscape) Modifier.height(dimens.imageHeight)
+                        else Modifier.fillMaxWidth().height(dimens.imageHeight)
+                    )
+                    .clip(imageInsideShape)
+                    .clickable { showFullScreen = true },
+                contentScale = ContentScale.Crop
             )
+            Spacer(modifier = Modifier.height(dimens.cardPadding))
         }
     }
 }
