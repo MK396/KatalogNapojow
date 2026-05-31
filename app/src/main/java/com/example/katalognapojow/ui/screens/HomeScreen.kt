@@ -39,13 +39,13 @@ import com.example.katalognapojow.R
 import com.example.katalognapojow.Screen
 import com.example.katalognapojow.ui.theme.LocalDimens
 
-// 1. KROK: Klasa reprezentująca elementy karuzeli (zdjęcie lub wideo)
+// Elementy karuzeli
 sealed class CarouselItem(val title: String, val route: String) {
     class ImageItem(val imageRes: Int, title: String, route: String) : CarouselItem(title, route)
     class VideoItem(val videoRawRes: Int, title: String, route: String) : CarouselItem(title, route)
 }
 
-// 2. KROK: Komponent odtwarzacza reagujący na parametr isPlaying
+// Reagowanie na isPlaying
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
@@ -64,14 +64,14 @@ fun VideoPlayer(
         }
     }
 
-    // Dynamiczne sterowanie odtwarzaniem i głośnością
+    // Sterowanie dzwiekiem i odtwarzaniem
     LaunchedEffect(isPlaying) {
         if (isPlaying) {
-            exoPlayer.volume = 1f         // Włącz dźwięk, gdy karta jest aktywna
+            exoPlayer.volume = 1f         // Wlacz dzwięk
             exoPlayer.playWhenReady = true // Uruchom wideo
         } else {
-            exoPlayer.playWhenReady = false // Zatrzymaj wideo, gdy użytkownik przewinie dalej
-            exoPlayer.volume = 0f          // Wycisz na wszelki wypadek
+            exoPlayer.playWhenReady = false // Zatrzymaj wideo
+            exoPlayer.volume = 0f          // Wycisz
         }
     }
 
@@ -97,10 +97,9 @@ fun VideoPlayer(
 fun HomeScreen(navController: NavController) {
     val dimens = LocalDimens.current
 
-    // 3. KROK: Zmiana listy produktów na obiekty CarouselItem
+    // Lista na CarouselItem
     val products = listOf(
         CarouselItem.ImageItem(R.drawable.sok, "Sok", Screen.StillDrinks.route),
-        // Podmień R.raw.sok_video na dokładną nazwę swojego pliku w res/raw (bez rozszerzenia .mp4)
         CarouselItem.VideoItem(R.raw.cola_video, "Coca-Cola", Screen.SparklingDrinks.route),
         CarouselItem.ImageItem(R.drawable.czekolada, "Gorąca czekolada", Screen.HotDrinks.route)
     )
@@ -131,7 +130,7 @@ fun HomeScreen(navController: NavController) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLandscape) {
-            // --- TRYB POZIOMY ---
+            // Tryb poziomy
             Row(
                 modifier = Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -189,7 +188,6 @@ fun HomeScreen(navController: NavController) {
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         pageSpacing = 12.dp
                     ) { page ->
-                        // 4. KROK: Sprawdzenie, czy strona jest aktualnie zaznaczona (Landscape)
                         val isCurrentPage = pagerState.currentPage == page
                         ProductCarouselCard(
                             item = products[page],
@@ -200,7 +198,7 @@ fun HomeScreen(navController: NavController) {
                 }
             }
         } else {
-            // --- TRYB PIONOWY ---
+            // Tryb pionowy
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -264,7 +262,6 @@ fun HomeScreen(navController: NavController) {
                     contentPadding = PaddingValues(horizontal = 32.dp),
                     pageSpacing = 16.dp
                 ) { page ->
-                    // 5. KROK: Sprawdzenie, czy strona jest aktualnie zaznaczona (Portrait)
                     val isCurrentPage = pagerState.currentPage == page
                     ProductCarouselCard(
                         item = products[page],
@@ -280,9 +277,9 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun ProductCarouselCard(
-    item: CarouselItem, // 6. KROK: Zmiana typu z Triple na CarouselItem
+    item: CarouselItem,
     navController: NavController,
-    isCurrentPage: Boolean // 7. KROK: Dodatkowy parametr sprawdzający widoczność
+    isCurrentPage: Boolean
 ) {
     val dimens = LocalDimens.current
 
@@ -294,7 +291,6 @@ fun ProductCarouselCard(
             .clickable { navController.navigate(item.route) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // 8. KROK: Warunkowe renderowanie obrazka lub odtwarzacza wideo
             when (item) {
                 is CarouselItem.ImageItem -> {
                     Image(

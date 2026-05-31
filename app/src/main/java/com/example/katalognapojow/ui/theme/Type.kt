@@ -14,9 +14,6 @@ val provider = GoogleFont.Provider(
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
-
-// Lato - czcionka bardzo czytelna, profesjonalna i elegancka.
-
 val LatoFontName = GoogleFont("Lato")
 
 val LatoFontFamily = FontFamily(

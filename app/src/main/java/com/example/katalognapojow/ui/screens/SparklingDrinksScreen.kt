@@ -94,7 +94,6 @@ fun DrinkCard(name: String, imageRes: Int) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = dimens.cardPadding, start = dimens.cardPadding, end = dimens.cardPadding),
-            // Usunąłem padding od dołu z głównego kontenera, żeby precyzyjnie kontrolować go Spacerem
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -112,15 +111,12 @@ fun DrinkCard(name: String, imageRes: Int) {
                 modifier = Modifier
                     .then(
                         if (isLandscape) Modifier.height(dimens.imageHeight)
-                        // Teraz automatycznie pobierze 240.dp na telefonie (wyższa karta, szerszy produkt)
                         else Modifier.fillMaxWidth().height(dimens.imageHeight)
                     )
                     .clip(imageInsideShape)
                     .clickable { showFullScreen = true },
                 contentScale = ContentScale.Crop
             )
-
-            // ZMIANA: Dodatkowy odstęp na dole, żeby karta dobrze wyglądała przy większej wysokości
             Spacer(modifier = Modifier.height(dimens.cardPadding))
         }
     }

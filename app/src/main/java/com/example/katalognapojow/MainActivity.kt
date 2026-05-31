@@ -67,8 +67,6 @@ class MainActivity : ComponentActivity() {
                                 TopAppBar(
                                     windowInsets = if (isLandscape) WindowInsets(top = 24.dp, left = 10.dp, right = 10.dp) else TopAppBarDefaults.windowInsets,
                                     title = {
-                                        // USUNIĘTO: if (!isLandscape)
-                                        // Teraz ten kod wykona się zawsze, niezależnie od orientacji ekranu
                                         val titleText = when (currentRoute) {
                                             Screen.SparklingDrinks.route -> "Napoje gazowane"
                                             Screen.StillDrinks.route -> "Napoje niegazowane"

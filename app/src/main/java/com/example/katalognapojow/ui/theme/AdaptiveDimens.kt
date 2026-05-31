@@ -14,9 +14,8 @@ data class AdaptiveDimens(
     val cardFontSize: TextUnit,
     val buttonFontSize: TextUnit,
     val bodyFontSize: TextUnit,
-
-    val logoSize: Dp,           // logo w portrait
-    val logoSizeLandscape: Dp,  // logo w landscape
+    val logoSize: Dp,
+    val logoSizeLandscape: Dp,
     val buttonHeight: Dp,
     val cardPadding: Dp,
     val screenPadding: Dp,
@@ -30,7 +29,7 @@ fun adaptiveDimens(windowSizeClass: WindowSizeClass): AdaptiveDimens {
     val widthDp = windowSizeClass.widthSizeClass
 
     return when {
-        // Kompaktowa szerokość (< 600dp) — Telefony pionowo
+        // Kompaktowa szerokość (< 600dp)
         widthDp == WindowWidthSizeClass.Compact -> AdaptiveDimens(
             titleFontSize = 22.sp,
             cardFontSize = 18.sp,
@@ -40,13 +39,13 @@ fun adaptiveDimens(windowSizeClass: WindowSizeClass): AdaptiveDimens {
             logoSizeLandscape = if (isCompactHeight) 60.dp else 80.dp,
             buttonHeight = if (isCompactHeight) 44.dp else 56.dp,
             cardPadding = 12.dp,
-            screenPadding = 32.dp, // ZMIANA: Zwiększony margines ekranu, żeby zwęzić karty
-            imageHeight = if (isCompactHeight) 120.dp else 240.dp, // ZMIANA: Podwyższona puszka (karta będzie wyższa)
+            screenPadding = 32.dp,
+            imageHeight = if (isCompactHeight) 120.dp else 240.dp,
             carouselHeight = if (isCompactHeight) 160.dp else 220.dp,
             categoryButtonHeight = if (isCompactHeight) 70.dp else 90.dp,
         )
 
-        // Średnia szerokość (600–840dp) — Tablety pionowo (Twój przypadek z drugiego zdjęcia)
+        // Średnia szerokość (600–840dp)
         widthDp == WindowWidthSizeClass.Medium -> AdaptiveDimens(
             titleFontSize = 28.sp,
             cardFontSize = 22.sp,
@@ -58,11 +57,11 @@ fun adaptiveDimens(windowSizeClass: WindowSizeClass): AdaptiveDimens {
             cardPadding = 16.dp,
             screenPadding = 32.dp,
             imageHeight = 200.dp,
-            carouselHeight = if (isCompactHeight) 240.dp else 400.dp, // Podniesione z 320.dp na 400.dp
+            carouselHeight = if (isCompactHeight) 240.dp else 400.dp,
             categoryButtonHeight = if (isCompactHeight) 90.dp else 110.dp,
         )
 
-        // Expanded (840–1200dp) — Tablety poziomo
+        // Expanded (840–1200dp)
         widthDp == WindowWidthSizeClass.Expanded -> AdaptiveDimens(
             titleFontSize = 32.sp,
             cardFontSize = 24.sp,
@@ -74,11 +73,11 @@ fun adaptiveDimens(windowSizeClass: WindowSizeClass): AdaptiveDimens {
             cardPadding = 20.dp,
             screenPadding = 40.dp,
             imageHeight = 240.dp,
-            carouselHeight = if (isCompactHeight) 300.dp else 480.dp, // Podniesione z 420.dp na 480.dp
+            carouselHeight = if (isCompactHeight) 300.dp else 480.dp,
             categoryButtonHeight = if (isCompactHeight) 100.dp else 130.dp,
         )
 
-        // Large (1200–1600dp) — Duże tablety poziomo
+        // Large (1200–1600dp)
         widthDp.toString().contains("Large", ignoreCase = true) &&
                 !widthDp.toString().contains("Extra", ignoreCase = true) -> AdaptiveDimens(
             titleFontSize = 34.sp,
@@ -91,7 +90,7 @@ fun adaptiveDimens(windowSizeClass: WindowSizeClass): AdaptiveDimens {
             cardPadding = 24.dp,
             screenPadding = 48.dp,
             imageHeight = 280.dp,
-            carouselHeight = if (isCompactHeight) 340.dp else 540.dp, // Zwiększone na 540.dp
+            carouselHeight = if (isCompactHeight) 340.dp else 540.dp,
             categoryButtonHeight = if (isCompactHeight) 110.dp else 150.dp,
         )
 

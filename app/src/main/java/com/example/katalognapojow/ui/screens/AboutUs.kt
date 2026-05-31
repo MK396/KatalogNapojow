@@ -23,17 +23,15 @@ import com.example.katalognapojow.R
 @Composable
 fun AboutUsScreen() {
     val configuration = LocalConfiguration.current
-    // Sprawdzamy, czy użytkownik trzyma telefon poziomo
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberScrollState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // Przewijanie włączamy TYLKO w trybie poziomym
+            // Przewijanie w trybie poziomym
             .then(if (isLandscape) Modifier.verticalScroll(scrollState) else Modifier)
             .padding(16.dp),
-        // W poziomie wyrównujemy do góry (łatwiej się czyta od początku), w pionie idealnie na środku
         contentAlignment = if (isLandscape) Alignment.TopCenter else Alignment.Center
     ) {
         Image(
@@ -42,15 +40,12 @@ fun AboutUsScreen() {
             modifier = Modifier
                 .then(
                     if (isLandscape) {
-                        // W poziomie wymuszamy określoną szerokość (np. 55% ekranu)
                         Modifier.fillMaxWidth(0.55f)
                     } else {
-                        // W pionie kurczymy komponent do fizycznych granic dopasowanego obrazu
                         Modifier.wrapContentSize()
                     }
                 )
                 .clip(RoundedCornerShape(24.dp)),
-            // Dobieramy odpowiednie skalowanie w zależności od orientacji
             contentScale = if (isLandscape) ContentScale.FillWidth else ContentScale.Fit
         )
     }
