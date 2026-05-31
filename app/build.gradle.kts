@@ -33,6 +33,10 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+
+    }
+
 }
 
 dependencies {
